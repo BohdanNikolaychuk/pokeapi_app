@@ -1,5 +1,4 @@
 export interface IPokemonData {
-	number?: number
 	name: string
 	url: string
 }
@@ -7,9 +6,9 @@ export interface IPokemonData {
 export interface IPokemonInfo {
 	name: string
 	id: string
-	sprites: Image
-}
-
-export interface Image {
-	front_default: string
+	sprites: {
+		front_default: string
+	}
+	abilities: Array<{ ability: { name: string } }>
+	types: Array<{ type: { name: string } }>
 }

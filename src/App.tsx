@@ -1,37 +1,58 @@
-import { Box, Button, Container, Grid } from '@mui/material'
-import axios from 'axios'
 import { useEffect, useState } from 'react'
+//MUI
+import { Box, Button, Container, Grid } from '@mui/material'
+//I
 import { IPokemonData, IPokemonInfo } from './@types/Pokemon.interface'
+// components
 import CardView from './components/Card/Card'
 import Info from './components/Info/Info'
+//axios
+import axios from 'axios'
+import { FULL_LINK, searchByName } from './utils/axios'
 
 function App() {
-	const [SelectData, setSelectData] = useState<IPokemonInfo[]>([])
-	const [NextUrl, setNextUrl] = useState<string | null>('')
-	const [PrevUrl, setPrevUrl] = useState<string | null>('')
-	const [Url, setUrl] = useState<string>(
-		'https://pokeapi.co/api/v2/pokemon/?limit=12'
-	)
+	const [SelectData, setSelectData] = useState<IPokemonData[]>([])
+	const [selectInfoData, setSelectInfoData] = useState<IPokemonInfo>()
+	const [NextUrl, setNextUrl] = useState<string>('')
+	const [PrevUrl, setPrevUrl] = useState<string>('')
+	const [Show, SetShow] = useState<boolean>(false)
+	const [Loading, SetLoading] = useState<boolean>(false)
+	const [SearchQuery, setSearchQuery] = useState<string>('')
+	const [Url, setUrl] = useState<string>(FULL_LINK)
 	useEffect(() => {
 		getPokemonData()
 	}, [Url])
 
 	const getPokemonData = async () => {
-		const res = await axios.get(Url)
-		setPrevUrl(res.data.previous)
-		setNextUrl(res.data.next)
-		getAllPokemonData(res.data.results)
+		SetLoading(true)
+		try {
+			const res = await axios.get(Url)
+			setPrevUrl(res.data.previous)
+			setNextUrl(res.data.next)
+			setSelectData(res.data.results)
+			SetLoading(false)
+		} catch (error) {
+			alert(error)
+			SetLoading(false)
+		}
 	}
 
-	const getAllPokemonData = (data: IPokemonData[]) => {
-		data.map(async element => {
-			const res = await axios.get(element.url)
-			setSelectData(prev => {
-				prev = [...prev, res.data]
-				prev.sort((a, b) => (a.id > b.id ? 1 : -1))
-				return prev
-			})
-		})
+	const getInfoByName = async (SearchQuery: string) => {
+		SetLoading(true)
+		try {
+			setSearchQuery(SearchQuery)
+			const res = await axios.get(searchByName(SearchQuery))
+			setSelectInfoData(res.data)
+			SetShow(true)
+			SetLoading(false)
+		} catch (error) {
+			alert(error)
+			SetLoading(false)
+		}
+	}
+
+	if (Loading) {
+		return <>Loading.....</>
 	}
 
 	return (
@@ -40,16 +61,34 @@ function App() {
 				<Box display='flex' justifyContent='space-between'>
 					<Box mt='120px' maxWidth='50%'>
 						<Grid container spacing={2} columns={16}>
-							<CardView pokemon={SelectData} />
+							<CardView
+								setSearch={text => getInfoByName(text)}
+								pokemon={SelectData}
+							/>
 						</Grid>
 					</Box>
-					<Box maxWidth='50%'>
-						<Info />
-					</Box>
+					{Show && selectInfoData ? (
+						<>
+							<Box maxWidth='50%'>
+								<Info {...selectInfoData} />
+							</Box>
+						</>
+					) : (
+						<></>
+					)}
 				</Box>
 				<Box pt='20px' display='flex' justifyContent='center'>
-					<Button variant='text'>Next</Button>
-					<Button variant='text'>Prev</Button>
+					<Button
+						onClick={() => {
+							setUrl(PrevUrl)
+						}}
+						variant='text'
+					>
+						Prev
+					</Button>
+					<Button onClick={() => setUrl(NextUrl)} variant='text'>
+						Next
+					</Button>
 				</Box>
 			</Container>
 		</>
