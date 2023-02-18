@@ -18,8 +18,6 @@ interface CardPokemonProps {
 }
 
 const CardView: React.FC<CardPokemonProps> = memo(({ pokemons, setSearch }) => {
-	console.log('rerender Card')
-
 	return (
 		<>
 			<Grid

@@ -13,52 +13,57 @@ import { IPokemonInfo } from '../../@types/Pokemon.interface'
 import { replaceToSpace } from '../../helpers/replaceToSpace'
 import { toFirstCharUppercase } from '../../helpers/toFirstCharUppercase'
 
-const Info = memo(({ name, sprites, abilities, types }: IPokemonInfo) => {
-	console.log('rerender Info')
-	return (
-		<>
-			<Box>
-				<Box
-					component='img'
-					sx={{
-						height: 'auto',
-						width: '100%',
-					}}
-					alt={name}
-					src={sprites.front_default}
-				/>
-				<Typography variant='subtitle1' color='text.secondary' component='div'>
-					Name : {toFirstCharUppercase(name)}
-				</Typography>
+const Info: React.FC<IPokemonInfo> = memo(
+	({ name, sprites, abilities, types }) => {
+		return (
+			<>
 				<Box>
-					abilities:
-					{abilities.map((element, i) => (
-						<Paper key={i} sx={{ width: 320, maxWidth: '100%' }}>
-							<MenuList>
-								<MenuItem>
-									<ListItemText>
-										{replaceToSpace(element.ability.name)}
-									</ListItemText>
-								</MenuItem>
-							</MenuList>
-						</Paper>
-					))}
-					types:
-					{types.map((element, i) => (
-						<Paper key={i} sx={{ width: 320, maxWidth: '100%' }}>
-							<MenuList>
-								<MenuItem>
-									<ListItemText>
-										{replaceToSpace(element.type.name)}
-									</ListItemText>
-								</MenuItem>
-							</MenuList>
-						</Paper>
-					))}
+					<Box
+						component='img'
+						sx={{
+							height: 'auto',
+							width: '100%',
+						}}
+						alt={name}
+						src={sprites.front_default}
+					/>
+					<Typography
+						variant='subtitle1'
+						color='text.secondary'
+						component='div'
+					>
+						Name : {toFirstCharUppercase(name)}
+					</Typography>
+					<Box>
+						abilities:
+						{abilities.map((element, i) => (
+							<Paper key={i} sx={{ width: 320, maxWidth: '100%' }}>
+								<MenuList>
+									<MenuItem>
+										<ListItemText>
+											{replaceToSpace(element.ability.name)}
+										</ListItemText>
+									</MenuItem>
+								</MenuList>
+							</Paper>
+						))}
+						types:
+						{types.map((element, i) => (
+							<Paper key={i} sx={{ width: 320, maxWidth: '100%' }}>
+								<MenuList>
+									<MenuItem>
+										<ListItemText>
+											{replaceToSpace(element.type.name)}
+										</ListItemText>
+									</MenuItem>
+								</MenuList>
+							</Paper>
+						))}
+					</Box>
 				</Box>
-			</Box>
-		</>
-	)
-})
+			</>
+		)
+	}
+)
 
 export default Info
