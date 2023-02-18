@@ -1,16 +1,23 @@
+import { memo } from 'react'
+
+//MUI
 import { Box, Typography } from '@mui/material'
 import ListItemText from '@mui/material/ListItemText'
 import MenuItem from '@mui/material/MenuItem'
 import MenuList from '@mui/material/MenuList'
 import Paper from '@mui/material/Paper'
-import { memo } from 'react'
+// I
 import { IPokemonInfo } from '../../@types/Pokemon.interface'
+
+//Hepler
 import { replaceToSpace } from '../../helpers/replaceToSpace'
+import { toFirstCharUppercase } from '../../helpers/toFirstCharUppercase'
 
 const Info = memo(({ name, sprites, abilities, types }: IPokemonInfo) => {
+	console.log('rerender Info')
 	return (
 		<>
-			<Box mt='120px'>
+			<Box>
 				<Box
 					component='img'
 					sx={{
@@ -21,7 +28,7 @@ const Info = memo(({ name, sprites, abilities, types }: IPokemonInfo) => {
 					src={sprites.front_default}
 				/>
 				<Typography variant='subtitle1' color='text.secondary' component='div'>
-					Name : {name}
+					Name : {toFirstCharUppercase(name)}
 				</Typography>
 				<Box>
 					abilities:

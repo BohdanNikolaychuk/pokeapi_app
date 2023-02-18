@@ -1,8 +1,14 @@
 import { useEffect, useState } from 'react'
 //MUI
-import { Box, Button, Container, Grid } from '@mui/material'
+
+import { Box, Button, Container, Grid, IconButton } from '@mui/material'
+
 //I
-import { IPokemonData, IPokemonInfo } from './@types/Pokemon.interface'
+import {
+	IPokemonData,
+	IPokemonInfo,
+	IPokemonResponse,
+} from './@types/Pokemon.interface'
 // components
 import CardView from './components/Card/Card'
 import Info from './components/Info/Info'
@@ -15,72 +21,41 @@ function App() {
 	const [selectInfoData, setSelectInfoData] = useState<IPokemonInfo>()
 	const [NextUrl, setNextUrl] = useState<string>('')
 	const [PrevUrl, setPrevUrl] = useState<string>('')
-	const [Show, SetShow] = useState<boolean>(false)
-	const [Loading, SetLoading] = useState<boolean>(false)
-	const [SearchQuery, setSearchQuery] = useState<string>('')
+	const [Show, setShow] = useState<boolean>(false)
 	const [Url, setUrl] = useState<string>(FULL_LINK)
 	useEffect(() => {
 		getPokemonData()
 	}, [Url])
 
 	const getPokemonData = async () => {
-		SetLoading(true)
 		try {
-			const res = await axios.get(Url)
-			setPrevUrl(res.data.previous)
-			setNextUrl(res.data.next)
-			setSelectData(res.data.results)
-			SetLoading(false)
+			const { data } = await axios.get<IPokemonResponse>(Url)
+
+			setPrevUrl(data.previous)
+			setNextUrl(data.next)
+			setSelectData(data.results)
 		} catch (error) {
 			alert(error)
-			SetLoading(false)
 		}
 	}
 
 	const getInfoByName = async (SearchQuery: string) => {
-		SetLoading(true)
 		try {
-			setSearchQuery(SearchQuery)
-			const res = await axios.get(searchByName(SearchQuery))
-			setSelectInfoData(res.data)
-			SetShow(true)
-			SetLoading(false)
+			const { data } = await axios.get(searchByName(SearchQuery))
+			setSelectInfoData(data)
+			setShow(true)
 		} catch (error) {
 			alert(error)
-			SetLoading(false)
 		}
-	}
-
-	if (Loading) {
-		return <>Loading.....</>
 	}
 
 	return (
 		<>
 			<Container maxWidth='lg'>
-				<Box display='flex' justifyContent='space-between'>
-					<Box mt='120px' maxWidth='50%'>
-						<Grid container spacing={2} columns={16}>
-							<CardView
-								setSearch={text => getInfoByName(text)}
-								pokemon={SelectData}
-							/>
-						</Grid>
-					</Box>
-					{Show && selectInfoData ? (
-						<>
-							<Box maxWidth='50%'>
-								<Info {...selectInfoData} />
-							</Box>
-						</>
-					) : (
-						<></>
-					)}
-				</Box>
 				<Box pt='20px' display='flex' justifyContent='center'>
 					<Button
 						onClick={() => {
-							setUrl(PrevUrl)
+							setUrl(PrevUrl === null ? FULL_LINK : PrevUrl)
 						}}
 						variant='text'
 					>
@@ -89,6 +64,26 @@ function App() {
 					<Button onClick={() => setUrl(NextUrl)} variant='text'>
 						Next
 					</Button>
+				</Box>
+				<Box display='flex' justifyContent='space-between'>
+					<Box mt='120px' maxWidth='50%'>
+						<Grid container spacing={2} columns={16}>
+							<CardView
+								setSearch={text => getInfoByName(text)}
+								pokemons={SelectData}
+							/>
+						</Grid>
+					</Box>
+					{Show && selectInfoData ? (
+						<>
+							<Box maxWidth='50%'>
+								<IconButton onClick={() => setShow(false)}>x</IconButton>
+								<Info {...selectInfoData} />
+							</Box>
+						</>
+					) : (
+						<></>
+					)}
 				</Box>
 			</Container>
 		</>

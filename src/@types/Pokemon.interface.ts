@@ -1,3 +1,10 @@
+export interface IPokemonResponse {
+	count?: number
+	previous: string
+	next: string
+	results: IPokemonData[]
+}
+
 export interface IPokemonData {
 	name: string
 	url: string
@@ -12,3 +19,5 @@ export interface IPokemonInfo {
 	abilities: Array<{ ability: { name: string } }>
 	types: Array<{ type: { name: string } }>
 }
+
+export interface IPokemonResponseData {}

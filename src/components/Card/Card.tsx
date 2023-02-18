@@ -5,14 +5,21 @@ import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import Typography from '@mui/material/Typography'
+
+//I
 import { IPokemonData } from '../../@types/Pokemon.interface'
 
+//Helper
+import { toFirstCharUppercase } from '../../helpers/toFirstCharUppercase'
+
 interface CardPokemonProps {
-	pokemon: IPokemonData[]
+	pokemons: IPokemonData[]
 	setSearch: (text: string) => void
 }
 
-const CardView: React.FC<CardPokemonProps> = memo(({ pokemon, setSearch }) => {
+const CardView: React.FC<CardPokemonProps> = memo(({ pokemons, setSearch }) => {
+	console.log('rerender Card')
+
 	return (
 		<>
 			<Grid
@@ -20,9 +27,9 @@ const CardView: React.FC<CardPokemonProps> = memo(({ pokemon, setSearch }) => {
 				spacing={{ xs: 2, md: 3 }}
 				columns={{ xs: 3, sm: 3, md: 12 }}
 			>
-				{pokemon.map(element => (
-					<Grid item xs={2} sm={4} md={4} key={element.url}>
-						<Card onClick={() => setSearch(element.name)}>
+				{pokemons.map(pokemon => (
+					<Grid item xs={2} sm={4} md={4} key={pokemon.url}>
+						<Card onClick={() => setSearch(pokemon.name)}>
 							<Box>
 								<CardContent>
 									<Typography
@@ -30,7 +37,7 @@ const CardView: React.FC<CardPokemonProps> = memo(({ pokemon, setSearch }) => {
 										color='text.secondary'
 										component='div'
 									>
-										{element.name}
+										{toFirstCharUppercase(pokemon.name)}
 									</Typography>
 								</CardContent>
 							</Box>
